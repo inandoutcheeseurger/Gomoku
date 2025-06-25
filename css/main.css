@@ -1,0 +1,34 @@
+#board {
+    display: grid;
+    grid-template-columns: repeat(15, 40px); /* 15 columns, 40px wide each */
+    grid-template-rows: repeat(15, 40px);    /* 15 rows, 40px high each */
+    gap: 2px;  /* Space between the cells */
+    width: 630px; /* 15 x 40px + gaps */
+    height: 630px; /* 15 x 40px + gaps */
+    margin: 20px auto;
+    border: 2px solid black;
+  }
+  
+  .cell {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .black, .white {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+  }
+  .black{
+    background-color: black;
+  }
+  .white{
+    background-color: white;
+    border: 2px solid black;
+  }

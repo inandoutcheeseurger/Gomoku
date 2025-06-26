@@ -1,34 +1,82 @@
 #board {
-    display: grid;
-    grid-template-columns: repeat(15, 40px); /* 15 columns, 40px wide each */
-    grid-template-rows: repeat(15, 40px);    /* 15 rows, 40px high each */
-    gap: 2px;  /* Space between the cells */
-    width: 630px; /* 15 x 40px + gaps */
-    height: 630px; /* 15 x 40px + gaps */
-    margin: 20px auto;
-    border: 2px solid black;
-  }
-  
-  .cell {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #ddd;
-    background-color: white;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .black, .white {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-  }
-  .black{
-    background-color: black;
-  }
-  .white{
-    background-color: white;
-    border: 2px solid black;
-  }
+  display: grid;
+  grid-template-columns: repeat(15, 40px); /* 15 columns, 40px wide each */
+  grid-template-rows: repeat(15, 40px);    /* 15 rows, 40px high each */
+  /* removed the gap since it only makes it look wierd gappy between cells*/
+  width: 600px; /* 15 x 40px + gaps(removed) */
+  height: 600px; /* 15 x 40px + gaps(removed) */
+  margin: 20px auto;
+  border: 2px solid black;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  background-color: #e0c68f;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  /* Remove borders from each cell to create the solid board appearance */
+}
+
+.cell::before, .cell::after {
+  content: "";
+  position: absolute;
+  background-color: #4b3d27; /* Dark brown for "+" lines */
+}
+
+/* Horizontal line for the "+" in the center of each cell */
+.cell::before {
+  height: 2px;
+  width: 100%; /* Adjust size to fit inside the cell */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Vertical line for the "+" in the center of each cell */
+.cell::after {
+  width: 2px;
+  height: 100%; /* Adjust size to fit inside the cell */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* First row: Cut off top half of the vertical line */
+.cell:nth-child(-n+15)::after {
+  clip-path: inset(50% 0% 0% 0%); /* Removes the top half */
+}
+
+/* Last row: Cut off bottom half of the horizontal line */
+.cell:nth-child(n+211):nth-child(-n+225)::after {
+  clip-path: inset(0% 0% 50% 0%); /* Removes the bottom half */
+  width: 2px;
+}
+
+/* First column: Cut off left half of the vertical line */
+.cell:nth-child(15n + 1)::before {
+  clip-path: inset(0% -10% 0% 50%); /* Removes the left half */
+}
+
+/* Last column: Cut off right half of the vertical line */
+.cell:nth-child(15n)::before {
+  clip-path: inset(0% 50% 0% 0%); /* Removes the right half */
+}
+
+.black, .white {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.black {
+  background-color: black;
+}
+
+.white {
+  background-color: white;
+}

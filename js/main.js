@@ -3,7 +3,7 @@ const boardElement = document.getElementById("board");
 const boardSize = 15;
 let board = Array.from({ length: boardSize }, () => Array(boardSize).fill(null));
 
-let currentPlayer = 'black'; // black goes first
+let currentPlayer = 'white'; // white goes second
 
 // Create the board cells
 for (let row = 0; row < boardSize; row++) {
@@ -12,6 +12,12 @@ for (let row = 0; row < boardSize; row++) {
     cell.classList.add("cell");
     cell.dataset.row = row;
     cell.dataset.col = col;
+    if(row === 7 && col ===7){
+      const piece = document.createElement("div");
+      piece.classList.add("piece");
+      piece.classList.add("black");
+      cell.appendChild(piece);
+    }
     cell.addEventListener("click", handleCellClick);
     boardElement.appendChild(cell);
   }
@@ -29,6 +35,7 @@ function handleCellClick(event) {
 
   // Create a piece (circle)
   const piece = document.createElement("div");
+  piece.classList.add("piece");
   piece.classList.add(currentPlayer);
   event.target.appendChild(piece);
 

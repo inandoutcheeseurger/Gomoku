@@ -63,6 +63,9 @@ function handleCellClick(event) {
   piece.classList.add("piece");
   piece.classList.add(currentPlayer);
   event.target.appendChild(piece);
+  //remove ghost piece
+  const ghost = event.target.querySelector(".ghost");
+  if (ghost) ghost.remove();
 
   // Check for a winner
   if (checkWin(row, col)) {

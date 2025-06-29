@@ -9,6 +9,40 @@
   border: 2px solid black;
 }
 
+#addUtil{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.buttons {
+  padding: 10px 20px;
+  background-color: #4b3d27; /* dark wood tone */
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  margin: 20px auto;
+  display: block;
+}
+
+/* Hover: brighter color */
+.buttons:hover {
+  background-color: #6b513b;
+}
+
+/* Click: darker and slight shrink */
+.buttons:active {
+  background-color: #3b2b1d;
+  transform: scale(0.96);
+}
+
+
 .cell {
   width: 40px;
   height: 40px;
@@ -79,4 +113,8 @@
 
 .white {
   background-color: white;
+}
+
+.ghost {
+  opacity: 0.4; /* semi-transparent */
 }

@@ -157,3 +157,106 @@ function undo() {
     alert("changing the first move is not acceptable lil bro go lick my butt");
   }
 }
+// renju rule part
+
+function isForbiddenMove(row, col) {
+  if (currentPlayer !== 'black') return false; // Renju rule only applies to Black
+  if (board[row][col] !== null) return false; // Can’t place on occupied space
+
+  // Temporarily place a black stone
+  board[row][col] = 'black';
+
+  const counts = {
+    threes: 0,
+    fours: 0,
+    overline: false // 6 or more
+  };
+
+  const directions = [
+    [0, 1],  // horizontal
+    [1, 0],  // vertical
+    [1, 1],  // diagonal \
+    [1, -1], // diagonal /
+  ];
+
+  for (let [dr, dc] of directions) {
+    const line = getLine(row, col, dr, dc); // e.g. [null, 'black', 'black', 'black', null]
+    const patterns = analyzeLine(line);
+    counts.threes += patterns.threes;
+    counts.fours += patterns.fours;
+    if (patterns.overline) counts.overline = true;
+  }
+
+  // Remove the temp move
+  board[row][col] = null;
+
+  // 6-moku check
+  if (counts.overline) return true;
+
+  // 33 violation
+  if (counts.threes >= 2) return true;
+
+  // 44 violation
+  if (counts.fours >= 2) return true;
+
+  return false;
+}
+
+function getLine(row, col, dr, dc) {
+  const line = [];
+
+  for (let i = -4; i <= 4; i++) {
+    const r = row + dr * i;
+    const c = col + dc * i;
+    if (r >= 0 && r < boardSize && c >= 0 && c < boardSize) {
+      line.push(board[r][c]);
+    } else {
+      line.push('wall'); // Treat out-of-bounds as wall
+    }
+  }
+
+function analyzeLine(line) {
+  const str = line.map(cell => {
+    if (cell === 'black') return 'b';
+    if (cell === null) return '_';
+    return 'x'; // white, wall, or any blocking
+  }).join('');
+
+  let threes = 0;
+  let fours = 0;
+  let overline = false;
+
+  // Detect 6 or more in a row
+  if (/bbbbb+b/.test(str) || /bbbbbb+/.test(str)) {
+    overline = true;
+  }
+
+  // Detect open threes (both ends open)
+  const threePatterns = [
+    /_bbb_/,       // basic open 3
+    /_bb_b_/,      // 띈삼 pattern
+    /_b_bb_/,      // another 띈삼
+  ];
+  threePatterns.forEach(pattern => {
+    const matches = str.match(new RegExp(pattern, 'g'));
+    if (matches) threes += matches.length;
+  });
+
+  // Detect open fours
+  const fourPatterns = [
+    /_bbbb_/,      // standard open 4
+    /_bbb_b_/,     // 띈사 gapped four
+    /_bb_bb_/,     // another 띈사
+    /_b_bbb_/,     // another 띈사
+  ];
+  fourPatterns.forEach(pattern => {
+    const matches = str.match(new RegExp(pattern, 'g'));
+    if (matches) fours += matches.length;
+  });
+
+  return { threes, fours, overline };
+}
+
+
+  return line;
+}

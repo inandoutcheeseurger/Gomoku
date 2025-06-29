@@ -1,9 +1,27 @@
 // Select the board element
 const boardElement = document.getElementById("board");
+const utilBox = document.getElementById("addUtil");
+let moveStack = [];
 const boardSize = 15;
 let board = Array.from({ length: boardSize }, () => Array(boardSize).fill(null));
 
 let currentPlayer = 'white'; // white goes second
+
+const resetBut = document.createElement("button");
+resetBut.id = "reseetBtn";
+resetBut.classList.add("buttons");
+resetBut.addEventListener("click", resetGame);
+resetBut.innerHTML = "Reset Game";
+utilBox.appendChild(resetBut);
+
+const undoBut = document.createElement("button");
+undoBut.id = "undoBtn";
+undoBut.classList.add("buttons");
+undoBut.addEventListener("click", undo);
+undoBut.innerHTML = "undo / takeback";
+utilBox.appendChild(undoBut);
+
+
 
 // Create the board cells
 for (let row = 0; row < boardSize; row++) {
@@ -14,11 +32,15 @@ for (let row = 0; row < boardSize; row++) {
     cell.dataset.col = col;
     if(row === 7 && col ===7){
       const piece = document.createElement("div");
+      moveStack.push({row: row, col: col, player: 'black'});
+      board[row][col] = 'black';
       piece.classList.add("piece");
       piece.classList.add("black");
       cell.appendChild(piece);
     }
     cell.addEventListener("click", handleCellClick);
+    cell.addEventListener("mouseover", handleHover);
+    cell.addEventListener("mouseout", clearHover);
     boardElement.appendChild(cell);
   }
 }
@@ -32,6 +54,9 @@ function handleCellClick(event) {
 
   // Place the piece
   board[row][col] = currentPlayer;
+
+  // add to moveStack
+  moveStack.push({row: row, col: col, player: currentPlayer});
 
   // Create a piece (circle)
   const piece = document.createElement("div");
@@ -50,8 +75,29 @@ function handleCellClick(event) {
   currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
 }
 
+function handleHover(event) {
+  const row = parseInt(event.target.dataset.row);
+  const col = parseInt(event.target.dataset.col);
+
+  // Only show preview if the cell is empty
+  if (board[row][col] === null) {
+    const ghost = document.createElement("div");
+    ghost.classList.add("piece", "ghost", currentPlayer);
+    ghost.style.pointerEvents = "none"; // Prevent accidental clicks
+    event.target.appendChild(ghost);
+  }
+}
+
+function clearHover(event) {
+  const ghost = event.target.querySelector(".ghost");
+  if (ghost) ghost.remove();
+}
+
+
+
 function checkWin(row, col) {
   // Directions: horizontal, vertical, and two diagonals
+  console.log("checking winners?");
   const directions = [
     [[0, 1], [0, -1]], // Horizontal
     [[1, 0], [-1, 0]], // Vertical
@@ -81,5 +127,30 @@ function checkWin(row, col) {
 function resetGame() {
   board = Array.from({ length: boardSize }, () => Array(boardSize).fill(null));
   const cells = document.querySelectorAll(".cell");
-  cells.forEach(cell => cell.innerHTML = ''); // Clear the board
+  moveStack = [];
+  for (let cell of cells) {
+    if(parseInt(cell.dataset.row) === 7 && parseInt(cell.dataset.col) === 7 ){
+      board[parseInt(cell.dataset.row)][parseInt(cell.dataset.col)] = 'black';
+      moveStack.push({row: 7, col: 7, player: 'black'});
+      continue;
+    }
+    cell.innerHTML = '';
+  }
+  // second move: white
+  currentPlayer = 'white';
+}
+
+function undo() {
+  if(moveStack.length > 1){
+    const lastMove = moveStack.pop();
+    board[lastMove.row][lastMove.col] = null;
+    // Also remove the visual piece from the DOM
+    const cell = document.querySelector(`[data-row="${lastMove.row}"][data-col="${lastMove.col}"]`);
+    cell.innerHTML = "";
+    // Restore the turn
+    currentPlayer = lastMove.player;
+  }
+  else{
+    alert("changing the first move is not acceptable lil bro go lick my butt");
+  }
 }
